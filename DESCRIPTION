@@ -1,0 +1,14 @@
+Package: lambdaList
+Type: Package
+Title: An R Translation of Steve Losh's List Out of Lambda
+Version: 0.1.0
+Authors@R: c(person("Michael", "Quinn", , "msquinn2@illinois.edu", c("aut", "cre")))
+Description: This package translates Steve Losh's amazing article, List Out
+    of Lambda into R (see here: http://stevelosh.com/blog/2013/03/list-out-of-
+    lambda/) . Like the original article, it builds lists using only functions and
+    then expands on these "objects" with a variety of functional programming tools.
+    As far as the latter are concerned, the package draws considerably from Hadley
+    Wickham's package purrr (https://github.com/hadley/purrr).
+License: GPL3
+LazyData: TRUE
+RoxygenNote: 5.0.1
