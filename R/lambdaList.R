@@ -50,12 +50,13 @@
 #' @return A closure with the \code{fl} class added. The closure can be used to access
 #' different properties of the list: either the head, tail or its empty status.
 #'
-#' @export empty_list
+#' @export
 
 empty_list <- function(selector) {
-    structure(selector(NULL, NULL, TRUE), class = 'fl')
+    selector(NULL, NULL, TRUE)
 }
 
+empty_list <- structure(empty_list, class = c('fl', 'function'))
 
 #' Access the head of a functional list
 #'
@@ -63,15 +64,17 @@ empty_list <- function(selector) {
 #' it uses an anonymous function that returns a particular component of the functional
 #' list. Here that component is the functional list's \emph{head}.
 #'
-#' @param ls A function, with \emph{class} \code{fl}, that operates as a functional
+#' @param x A function, with \emph{class} \code{fl}, that operates as a functional
 #' list object
+#' @param ... Additional arguments to \code{head} (for argument consistency)
 #'
 #' @return The element stored in the head argument of the functional list
 #'
-#' @export head.fl
+#' @importFrom utils head
+#' @export
 
-head.fl <- function(ls) {
-    ls(function(h, t, e) h)
+head.fl <- function(x, ...) {
+    x(function(h, t, e) h)
 }
 
 
@@ -81,15 +84,17 @@ head.fl <- function(ls) {
 #' Like \code{\link{head}} and \code{\link{is_empty}}, this uses an anoymous function to
 #' return a particular component of a functional list. Here, that's the tail argument.
 #'
-#' @param ls A function, with \emph{class} \code{fl}, that operates as a functional
+#' @param x A function, with \emph{class} \code{fl}, that operates as a functional
 #' list object
+#' @param ... Additional arguments to \code{tail} (for argument consistency)
 #'
 #' @return The tail argument of a functional list
 #'
-#' @export tail.fl
+#' @importFrom utils tail
+#' @export
 
-tail.fl <- function(ls) {
-    ls(function(h, t, e) t)
+tail.fl <- function(x, ...) {
+    x(function(h, t, e) t)
 }
 
 
@@ -112,6 +117,7 @@ is_empty <- function(ls) {
 }
 
 
+
 # List Builders -----------------------------------------------------------
 
 #' Prepend adds an element to the list through recursion.
@@ -131,9 +137,30 @@ is_empty <- function(ls) {
 #' @export
 
 prepend <- function(ls, el) {
-    structure(function(selector) selector(el, ls, FALSE), class = 'fl')
+    structure(function(selector) selector(el, ls, FALSE), class = c('fl', 'function'))
 }
 
+
+#' @describeIn append Preserve Original Function
+#'
+#' @export
+
+append.default <- base::append
+
+
+#' New Append Generic
+#'
+#' So that we can have both the original and new version in our package
+#'
+#' @param ... Arguments for different versions of \code{append}
+#'
+#' @seealso \code{\link[base]{append}}
+#'
+#' @export
+
+append <- function(...) {
+    UseMethod('append')
+}
 
 #' Append adds an element to the end of the list.
 #'
@@ -145,6 +172,7 @@ prepend <- function(ls, el) {
 #' @param ls A function, with \emph{class} \code{fl}, that operates as a functional
 #' list object
 #' @param el A data element (from R's standard data types) to add to the list
+#' @param ... Used for S3 consistency
 #'
 #' @return A closure with the \code{fl} class added. The closure can be used to access
 #' different properties of the list: either the head, tail or its empty status.
@@ -153,7 +181,7 @@ prepend <- function(ls, el) {
 #'
 #' @export
 
-append <- function(ls, el) {
+append.fl <- function(ls, el) {
     if (is_empty(ls)) prepend(empty_list, el)
     else prepend(append(tail(ls), el), head(ls))
 }
@@ -183,18 +211,20 @@ concat <- function(lsa, lsb) {
 
 #' Print the contents of a functional list
 #'
-#' @param ls A function, with \emph{class} \code{fl}, that operates as a functional
+#' @param x A function, with \emph{class} \code{fl}, that operates as a functional
 #' list object
+#' @param ... Other arguments to print (for argument consistency)
 #'
-#' @export print.fl
+#' @method print fl
+#' @export
 
-print.fl <- function(ls) {
-    if (is_empty(tail(ls))) {
-        cat(head(ls), "")
+print.fl <- function(x, ...) {
+    if (is_empty(x)) {
+        cat("")
 
     } else {
-        cat(head(ls), "")
-        print(tail(ls))
+        cat(head(x), "")
+        print(tail(x))
     }
 }
 
@@ -203,16 +233,36 @@ print.fl <- function(ls) {
 #'
 #' Here, the length equals the number of scalar data objects that it contations.
 #'
-#' @param ls A function, with \emph{class} \code{fl}, that operates as a functional
+#' @param x A function, with \emph{class} \code{fl}, that operates as a functional
 #' list object
 #'
 #' @return A scalar equal to the number of scalars contained in the functional list.
 #'
-#' @export length.fl
+#' @method length fl
+#' @export
 
-length.fl <- function(ls) {
-    if (is_empty(ls)) 0
-    else length(tail(ls)) + 1
+length.fl <- function(x) {
+    if (is_empty(x)) 0
+    else length(tail(x)) + 1
+}
+
+
+#' Test if two functional lists are equal
+#'
+#' @param lsa A function, with \emph{class} \code{fl}, that operates as a functional
+#' list object
+#' @param lsb A function, with \emph{class} \code{fl}, that operates as a functional
+#' list object. This needs to be the same length as \code{lsa}
+#'
+#' @return A logical: TRUE or FALSE
+#'
+#' @export
+
+is_equal <- function(lsa, lsb) {
+    if (is_empty(lsa) && is_empty(lsb)) TRUE
+    else if (length(lsa) != length(lsb)) FALSE
+    else if (head(lsa) != head(lsb)) FALSE
+    else is_equal(tail(lsa), tail(lsb))
 }
 
 
@@ -233,10 +283,29 @@ length.fl <- function(ls) {
 #' @export
 
 nth <- function(ls, n) {
-    if (n == 0) head(ls)
+    if (n <= 0) head(ls)
     else nth(tail(ls), n - 1)
 }
 
+
+#' @describeIn drop Preserve original version
+#' @export
+
+drop.default <- base::drop
+
+
+#' New Drop Generic
+#'
+#' So that we can have both the original and new version in our package
+#'
+#' @param ... Arguments to various versions of \code{drop}
+#'
+#' @seealso \code{\link[base]{drop}}
+#' @export
+
+drop <- function(...) {
+    UseMethod('drop')
+}
 
 #' Drop all elements before nth element in a list
 #'
@@ -248,14 +317,15 @@ nth <- function(ls, n) {
 #' list object
 #' @param n An integer referring the cardinal position of a scalar in the
 #' functional list object
+#' @param ... Used for S3 consistency
 #'
 #' @return A functional list containing all of the scalars including and after
 #' the \emph{nth} position
 #'
 #' @export
 
-drop <- function(ls, n) {
-    if (n == 0) ls
+drop.fl <- function(ls, n) {
+    if (n <= 0) ls
     else drop(tail(ls), n - 1)
 }
 
@@ -277,7 +347,7 @@ drop <- function(ls, n) {
 #' @export
 
 take <- function(ls, n) {
-    if (n == 0) empty_list
+    if (n <= 0) empty_list
     else prepend(take(tail(ls), n - 1), head(ls))
 }
 
@@ -290,8 +360,8 @@ take <- function(ls, n) {
 #'
 #' @param ls A function, with \emph{class} \code{fl}, that operates as a functional
 #' list object
-#' @param n An integer referring the cardinal position of a scalar in the
-#' functional list object
+#' @param start An integer referring the cardinal position of the first element in the slice
+#' @param end An integer referring to the position after the final element in the slice
 #'
 #' @return A functional list containing all of the scalars from the \code{start}
 #' position but before the \code{end} position
@@ -347,10 +417,6 @@ map <- function(ls, fn, ...) {
 #' @export
 
 map2 <- function(lsa, lsb, fn, ...) {
-    # Assert length of lists equal
-    stopifnot(length(lsa) != length(lsb))
-
-    # Recursive logic
     if (is_empty(lsa)) empty_list
     else prepend(map2(tail(lsa), tail(lsb), fn, ...), fn(head(lsa), head(lsb), ...))
 }
@@ -363,6 +429,7 @@ map2 <- function(lsa, lsb, fn, ...) {
 #' @param ls A function, with \emph{class} \code{fl}, that operates as a functional
 #' list object
 #' @param fn A binary function, i.e. a function that takes two arguments
+#' @param ... Additional arguments to \code{fn}
 #'
 #' @return A scalar
 #'
@@ -375,6 +442,24 @@ reduce <- function(ls, fn, ...) {
     else fn(head(ls), reduce(tail(ls), fn, ...), ...)
 }
 
+#' @describeIn filter Preserve original function
+#' @importFrom stats filter
+#' @export
+
+filter.default <- filter
+
+#' New generic filter to keep both versions
+#'
+#' @param ... Arguments to different versions of filter
+#'
+#' @seealso \code{\link[stats]{filter}}
+#'
+#' @export
+
+filter <- function(...) {
+    UseMethod('filter')
+}
+
 
 #' Return values that fulfill a predicate function
 #'
@@ -385,6 +470,7 @@ reduce <- function(ls, fn, ...) {
 #' @param ls A function, with \emph{class} \code{fl}, that operates as a functional
 #' list object
 #' @param fn A predicate function, as described above
+#' @param ... Additional arguments to \code{fn}
 #'
 #' @return A functional list whose data elements return \code{true} in the predicate
 #' function.
@@ -393,18 +479,37 @@ reduce <- function(ls, fn, ...) {
 #'
 #' @export
 
-filter <- function(ls, fn) {
+filter.fl <- function(ls, fn, ...) {
     if (is_empty(ls)) {
         empty_list
 
-    } else if (fn(head(ls))) {
-        prepend(filter(tail(ls), fn), head(ls))
+    } else if (fn(head(ls), ...)) {
+        prepend(filter(tail(ls), fn, ...), head(ls))
 
     } else {
-        filter(tail(ls), fn)
+        filter(tail(ls), fn, ...)
     }
 }
 
+#' @describeIn remove Preserve original function
+#' @export
+
+remove.default <- base::remove
+
+
+#' New Remove Generic
+#'
+#' So that we can have both the original and new version in our package
+#'
+#' @param ... Arguments to different versions of \code{remove}
+#'
+#' @seealso \code{\link[base]{remove}}
+#'
+#' @export
+
+remove <- function(...) {
+    UseMethod("remove")
+}
 
 #' Return values that don't fulfill a predicate function
 #'
@@ -415,6 +520,7 @@ filter <- function(ls, fn) {
 #' @param ls A function, with \emph{class} \code{fl}, that operates as a functional
 #' list object
 #' @param fn A predicate function, as described above
+#' @param ... Additional arguments to remove, for S3 consistency
 #'
 #' @return A functional list whose data elements return \code{false} in the predicate
 #' function.
@@ -423,7 +529,7 @@ filter <- function(ls, fn) {
 #'
 #' @export
 
-remove <- function(ls, fn) {
+remove.fl <- function(ls, fn, ...) {
     if (is_empty(ls)) {
         empty_list
 
@@ -454,7 +560,7 @@ remove <- function(ls, fn) {
 #' @export
 
 rerun <- function(n, expr) {
-    if (n == 0) empty_list
+    if (n <= 0) empty_list
     else prepend(rerun(n - 1, expr), eval(expr))
 }
 
@@ -464,6 +570,7 @@ rerun <- function(n, expr) {
 #' This function generates a functional list that generates a sequence of
 #' integers in a manner similar to \code{range} in \code{Python}.
 #'
+#' @param empty An empty functional list, used to take advance of S3
 #' @param start An integer specifying the begin of the sequence
 #' @param end An integer that is the end of the sequence (but not included)
 #'
@@ -471,7 +578,7 @@ rerun <- function(n, expr) {
 #'
 #' @export
 
-sequence <- function(start, end) {
-    if (end == start) empty_list
-    else prepend(sequence(start + 1, end), start)
+seq.fl <- function(empty, start, end) {
+    if (end <= start) empty
+    else prepend(seq(empty, start + 1, end), start)
 }

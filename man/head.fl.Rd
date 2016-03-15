@@ -4,11 +4,13 @@
 \alias{head.fl}
 \title{Access the head of a functional list}
 \usage{
-\method{head}{fl}(ls)
+\method{head}{fl}(x, ...)
 }
 \arguments{
-\item{ls}{A function, with \emph{class} \code{fl}, that operates as a functional
+\item{x}{A function, with \emph{class} \code{fl}, that operates as a functional
 list object}
+
+\item{...}{Additional arguments to \code{head} (for argument consistency)}
 }
 \value{
 The element stored in the head argument of the functional list

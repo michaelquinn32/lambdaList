@@ -9,7 +9,10 @@ Description: This package translates Steve Losh's amazing article, List Out
     then expands on these "objects" with a variety of functional programming tools.
     As far as the latter are concerned, the package draws considerably from Hadley
     Wickham's package purrr (https://github.com/hadley/purrr).
-License: GPL3
-Suggests: magrittr
+License: GPL-3
+Suggests: magrittr,
+    testthat
 LazyData: TRUE
 RoxygenNote: 5.0.1
+Imports: utils,
+    stats

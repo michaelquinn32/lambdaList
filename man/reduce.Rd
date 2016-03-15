@@ -11,6 +11,8 @@ reduce(ls, fn, ...)
 list object}
 
 \item{fn}{A binary function, i.e. a function that takes two arguments}
+
+\item{...}{Additional arguments to \code{fn}}
 }
 \value{
 A scalar

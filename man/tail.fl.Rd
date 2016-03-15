@@ -4,11 +4,13 @@
 \alias{tail.fl}
 \title{Access the tail component of a function list object}
 \usage{
-\method{tail}{fl}(ls)
+\method{tail}{fl}(x, ...)
 }
 \arguments{
-\item{ls}{A function, with \emph{class} \code{fl}, that operates as a functional
+\item{x}{A function, with \emph{class} \code{fl}, that operates as a functional
 list object}
+
+\item{...}{Additional arguments to \code{tail} (for argument consistency)}
 }
 \value{
 The tail argument of a functional list

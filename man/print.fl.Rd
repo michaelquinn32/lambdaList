@@ -4,11 +4,13 @@
 \alias{print.fl}
 \title{Print the contents of a functional list}
 \usage{
-\method{print}{fl}(ls)
+\method{print}{fl}(x, ...)
 }
 \arguments{
-\item{ls}{A function, with \emph{class} \code{fl}, that operates as a functional
+\item{x}{A function, with \emph{class} \code{fl}, that operates as a functional
 list object}
+
+\item{...}{Other arguments to print (for argument consistency)}
 }
 \description{
 Print the contents of a functional list

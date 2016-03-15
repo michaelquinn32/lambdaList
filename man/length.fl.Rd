@@ -4,10 +4,10 @@
 \alias{length.fl}
 \title{Find the length of a list}
 \usage{
-\method{length}{fl}(ls)
+\method{length}{fl}(x)
 }
 \arguments{
-\item{ls}{A function, with \emph{class} \code{fl}, that operates as a functional
+\item{x}{A function, with \emph{class} \code{fl}, that operates as a functional
 list object}
 }
 \value{
