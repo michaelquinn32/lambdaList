@@ -18,7 +18,7 @@
 #' @export
 
 append.fl <- function(ls, el) {
-    if (is_empty(ls)) prepend(empty_list, el)
+    if (is_empty(ls)) prepend(ls, el)
     else prepend(append(tail(ls), el), head(ls))
 }
 
