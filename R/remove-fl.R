@@ -17,15 +17,9 @@
 #' @export
 
 remove.fl <- function(ls, fn, ...) {
-    if (is_empty(ls)) {
-        empty_list
-
-    } else if (fn(head(ls))) {
-        remove(tail(ls), fn)
-
-    } else {
-        prepend(remove(tail(ls), fn), head(ls))
-    }
+    if (is_empty(ls)) empty_list
+    else if (fn(head(ls), ...)) remove(tail(ls), fn)
+    else prepend(remove(tail(ls), fn, ...), head(ls))
 }
 
 

@@ -121,6 +121,12 @@ test_that('Functional programming operators return correct results', {
     expect_equal(remove(another_list, is_odd) %>% head, 2)
     expect_true(is_equal(map2(another_list, another_list, `+`), answer_list))
     expect_equal(reduce(another_list, `+`), 3)
+    expect_false(find(empty_list, is_odd))
+    expect_false(find(answer_list, is_odd))
+    expect_equal(find(test_list, is_odd), 1)
+    expect_false(position(empty_list, is_odd))
+    expect_false(position(answer_list, is_odd))
+    expect_equal(position(test_list, is_odd), 0)
 })
 
 

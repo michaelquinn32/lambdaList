@@ -17,15 +17,9 @@
 #' @export
 
 filter.fl <- function(ls, fn, ...) {
-    if (is_empty(ls)) {
-        empty_list
-
-    } else if (fn(head(ls), ...)) {
-        prepend(filter(tail(ls), fn, ...), head(ls))
-
-    } else {
-        filter(tail(ls), fn, ...)
-    }
+    if (is_empty(ls)) empty_list
+    else if (fn(head(ls), ...)) prepend(filter(tail(ls), fn, ...), head(ls))
+    else filter(tail(ls), fn, ...)
 }
 
 #' @describeIn filter Preserve original function
