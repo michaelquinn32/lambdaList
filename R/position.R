@@ -17,8 +17,7 @@
 #' @export
 
 position <- function(ls, fn, start = 0) {
-    if (is_empty(ls)) FALSE
-    else if (fn(head(ls))) start
-    else position(tail(ls), fn, start + 1)
+    if (start >= length(ls)) FALSE
+    else if (fn(nth(ls, start))) start
+    else position(ls, fn, start + 1)
 }
-
