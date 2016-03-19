@@ -115,18 +115,28 @@ times_2 <- function(x) x * 2
 is_odd <- function(x) x %% 2 != 0
 answer_list <- empty_list %>% append(2) %>% append(4)
 
-test_that('Functional programming operators return correct results', {
+test_that('Functional programming operators: maps', {
     expect_true(is_equal(map(another_list, times_2), answer_list))
+    expect_true(is_equal(map2(another_list, another_list, `+`), answer_list))
+
+})
+
+test_that('Functional programming operators: filters', {
     expect_equal(filter(another_list, is_odd) %>% head, 1)
     expect_equal(remove(another_list, is_odd) %>% head, 2)
-    expect_true(is_equal(map2(another_list, another_list, `+`), answer_list))
-    expect_equal(reduce(another_list, `+`), 3)
     expect_false(find(empty_list, is_odd))
     expect_false(find(answer_list, is_odd))
     expect_equal(find(test_list, is_odd), 1)
     expect_false(position(empty_list, is_odd))
     expect_false(position(answer_list, is_odd))
     expect_equal(position(test_list, is_odd), 0)
+})
+
+test_that('Functional programming operators: reductions', {
+    expect_equal(reduce(another_list, `+`), 3)
+    expect_equal(reduce(another_list, `-`), -3)
+    expect_equal(reduce_right(another_list, `-`), 1)
+    expect_equal(reduce_right(seq(empty_list, 0, 11), `-`), Reduce(`-`, 0:10, right = TRUE))
 })
 
 

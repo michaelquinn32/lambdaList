@@ -2,15 +2,20 @@
 % Please edit documentation in R/reduce.R
 \name{reduce}
 \alias{reduce}
+\alias{reduce_right}
 \title{Reduce}
 \usage{
-reduce(ls, fn, ...)
+reduce(ls, fn, init = 0, ...)
+
+reduce_right(ls, fn, init = 0, ...)
 }
 \arguments{
 \item{ls}{A function, with \emph{class} \code{fl}, that operates as a functional
 list object}
 
 \item{fn}{A binary function, i.e. a function that takes two arguments}
+
+\item{init}{The initial value for the recursive}
 
 \item{...}{Additional arguments to \code{fn}}
 }
@@ -20,6 +25,10 @@ A scalar
 \description{
 Recursively fold a function across a list, yielding a scalar.
 }
+\section{Functions}{
+\itemize{
+\item \code{reduce_right}: Reduce the list from the other direction
+}}
 \seealso{
 \code{\link[base]{Reduce}}
 }
